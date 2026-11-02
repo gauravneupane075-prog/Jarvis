@@ -29,6 +29,7 @@
 
     <application
         android:allowBackup="false"
+        android:usesCleartextTraffic="false"
         android:icon="@mipmap/ic_launcher"
         android:label="JARVIS"
         android:supportsRtl="true"
