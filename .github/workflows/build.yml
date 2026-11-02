@@ -2,11 +2,13 @@ name: Build JARVIS APK
 
 on:
   push:
+    branches: [main, "feature/**"]
+  pull_request:
     branches: [main]
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
@@ -21,28 +23,14 @@ jobs:
         with:
           gradle-version: '8.7'
       - name: Build debug APK
-        run: |
-          set +e
-          gradle assembleDebug --no-daemon --stacktrace > build.log 2>&1
-          code=$?
-          if [ $code -ne 0 ]; then
-            msg=$(grep -E "^e: |AAPT|error:|What went wrong|Execution failed|Could not|not found|Unresolved" -A2 build.log | head -40 | sed 's/%/%25/g' | sed ':a;N;$!ba;s/\n/%0A/g')
-            echo "::error title=Build failed::$msg"
-          fi
-          exit $code
+        run: gradle assembleDebug --no-daemon --stacktrace
       - name: Collect APK
         run: |
           mkdir -p dist
-          cp app/build/outputs/apk/debug/app-debug.apk dist/JARVIS.apk
+          cp app/build/outputs/apk/debug/app-debug.apk dist/JARVIS-debug.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: JARVIS-apk
-          path: dist/JARVIS.apk
-      - name: Publish release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v1.0.${{ github.run_number }}
-          name: JARVIS v1.0.${{ github.run_number }}
-          body: "Install JARVIS.apk on your Android phone. See SETUP.md for the AI backend."
-          files: dist/JARVIS.apk
-          make_latest: true
+          name: JARVIS-debug-apk
+          path: dist/JARVIS-debug.apk
+          if-no-files-found: error
+          retention-days: 14
