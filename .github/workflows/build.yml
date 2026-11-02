@@ -21,7 +21,15 @@ jobs:
         with:
           gradle-version: '8.7'
       - name: Build debug APK
-        run: gradle assembleDebug --no-daemon --stacktrace
+        run: |
+          set +e
+          gradle assembleDebug --no-daemon --stacktrace > build.log 2>&1
+          code=$?
+          if [ $code -ne 0 ]; then
+            msg=$(grep -E "^e: |AAPT|error:|What went wrong|Execution failed|Could not|not found|Unresolved" -A2 build.log | head -40 | sed 's/%/%25/g' | sed ':a;N;$!ba;s/\n/%0A/g')
+            echo "::error title=Build failed::$msg"
+          fi
+          exit $code
       - name: Collect APK
         run: |
           mkdir -p dist
