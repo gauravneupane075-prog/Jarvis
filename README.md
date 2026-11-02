@@ -1,14 +1,22 @@
 # JARVIS: voice assistant for Android
 
 A native Android app (Kotlin) you control by voice. English and Nepali are supported; choose the speech-recognition language in Settings. Common Romanized Nepali and mixed English/Nepali phone commands are also recognized by the offline command parser.
-Questions, news and research use Claude through a small backend that keeps your API key off the phone.
 
-## Install the app (no coding needed)
-1. On your phone open this repository → **Releases** → latest release.
-2. Download **JARVIS.apk** and open it. Allow "Install unknown apps" for your browser when asked.
-3. Open JARVIS, tap the mic, allow the microphone, and speak.
+## Install the app
+1. Open the repository's **Actions** tab and select the latest successful **Build JARVIS APK** run.
+2. Download the **JARVIS-debug-apk** artifact and extract `JARVIS-debug.apk`.
+3. Transfer it to your Android phone, tap it, and allow your file manager to install unknown apps if Android asks.
+4. Open JARVIS and grant only the permissions you want to use.
 
-Each new build is a new release. If an update refuses to install, uninstall the old JARVIS first (builds are debug-signed).
+The debug APK is signed with Android's standard debug certificate so it can be installed for personal testing. It is not a Play Store release. If you install a different build signed with another key, Android may require you to uninstall the previous version first.
+
+## Security and privacy
+- Android backup is disabled for this app, and cleartext HTTP traffic is blocked. Configure your AI backend with an HTTPS URL.
+- Small secrets are encrypted using Android Keystore-backed AES-GCM storage.
+- Runtime permissions are requested by the app; deny any permission for features you do not want to use.
+- Phone commands run locally where possible. AI questions are sent to the configured AI provider/backend.
+- Never share your APK signing key, API key, or backend token. A debug build is for personal testing; Play Store distribution requires a protected release signing setup and Play Console review.
+- Google Play Protect may still display a warning for a sideloaded or unfamiliar APK. This project does not disable, bypass, or suppress Play Protect, and no developer can guarantee a clean verdict without Google's scanning.
 
 ## What works (no backend needed)
 Call a contact · prepare an SMS · prepare a WhatsApp message · open any app · search Google (opens browser) ·
