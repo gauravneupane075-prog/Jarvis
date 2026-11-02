@@ -27,6 +27,27 @@
             android:textStyle="bold" />
 
         <EditText
+            android:id="@+id/etKey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Claude API key (easiest way to chat)"
+            android:inputType="textPassword"
+            android:textColor="@color/jarvis_text"
+            android:textColorHint="@color/jarvis_dim" />
+
+        <Button
+            android:id="@+id/btnClearKey"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Remove saved API key" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Or use your own backend instead (optional, see SETUP.md):"
+            android:textColor="@color/jarvis_dim" />
+
+        <EditText
             android:id="@+id/etUrl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

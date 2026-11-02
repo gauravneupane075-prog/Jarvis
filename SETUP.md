@@ -3,7 +3,13 @@
 ## 1. Get the app
 Install JARVIS.apk from **Releases** (see README).
 
-## 2. Set up the AI backend (once, about 15 minutes, free tier)
+## 2a. Easiest: chat with your own Claude API key
+JARVIS → Settings → paste your Claude API key (from console.anthropic.com) → **Save and test connection**.
+The key is stored encrypted on your phone (Android Keystore) and is never in the code or on GitHub.
+Trade-off: the key lives on your phone, so use a key with a spending limit and remove it if you lose the phone.
+After JARVIS answers, it listens again for your follow-up, so you can talk back and forth.
+
+## 2b. Safer: set up the AI backend (once, about 15 minutes, free tier)
 You need: a free Cloudflare account, Node.js on a computer, and a Claude API key from console.anthropic.com.
 
 ```

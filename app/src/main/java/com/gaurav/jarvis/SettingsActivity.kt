@@ -18,6 +18,7 @@ class SettingsActivity : AppCompatActivity() {
     private val perms = Permissions(this)
     private lateinit var etUrl: EditText
     private lateinit var etToken: EditText
+    private lateinit var etKey: EditText
     private lateinit var tvPerms: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,6 +27,13 @@ class SettingsActivity : AppCompatActivity() {
         prefs = Prefs(this)
         etUrl = findViewById(R.id.etUrl)
         etToken = findViewById(R.id.etToken)
+        etKey = findViewById(R.id.etKey)
+        if (prefs.apiKey.isNotEmpty()) etKey.hint = "API key saved (type to replace)"
+        findViewById<Button>(R.id.btnClearKey).setOnClickListener {
+            prefs.apiKey = ""
+            etKey.hint = "Claude API key (easiest way to chat)"
+            Toast.makeText(this, "API key removed", Toast.LENGTH_SHORT).show()
+        }
         tvPerms = findViewById(R.id.tvPerms)
 
         etUrl.setText(prefs.backendUrl)
@@ -55,8 +63,8 @@ class SettingsActivity : AppCompatActivity() {
 
         findViewById<TextView>(R.id.tvPrivacy).text =
             "• Your contacts, messages, photos and notifications stay on this phone.\n" +
-            "• Only what you say or type for AI questions (plus the last few messages) is sent to your backend, " +
-            "which forwards it to Claude. Phone commands such as calling or opening apps work offline.\n" +
+            "• Only what you say or type for AI questions (plus the last few messages) is sent to Claude, directly with your own API key or through your backend." +
+            " Phone commands such as calling or opening apps work offline.\n" +
             "• JARVIS only listens while this app is open and you have tapped the mic or turned on hands-free.\n" +
             "• JARVIS never sends texts, WhatsApp messages or payments by itself. You always press send or approve.\n" +
             "• One-time codes in texts and notifications are never read aloud.\n" +
@@ -89,13 +97,21 @@ class SettingsActivity : AppCompatActivity() {
             etToken.setText("")
             etToken.hint = "Token saved (type to replace)"
         }
-        if (prefs.backendUrl.isBlank()) {
-            Toast.makeText(this, "Enter the backend URL first", Toast.LENGTH_LONG).show()
+        val k = etKey.text.toString().trim()
+        if (k.isNotEmpty()) {
+            prefs.apiKey = k
+            etKey.setText("")
+            etKey.hint = "API key saved (type to replace)"
+        }
+        if (prefs.apiKey.isBlank() && prefs.backendUrl.isBlank()) {
+            Toast.makeText(this, "Enter your Claude API key first", Toast.LENGTH_LONG).show()
             return
         }
         Toast.makeText(this, "Testing…", Toast.LENGTH_SHORT).show()
         lifecycleScope.launch {
-            val r = AiService().ask(prefs.backendUrl, prefs.token, prefs.language, listOf("user" to "Say hello in five words."))
+            val test = listOf("user" to "Say hello in five words.")
+            val r = if (prefs.apiKey.isNotBlank()) AiService().askDirect(prefs.apiKey, prefs.language, test)
+                else AiService().ask(prefs.backendUrl, prefs.token, prefs.language, test)
             val msg = when (r) {
                 is AiService.Result.Ok -> "Connected ✓  " + r.speech
                 is AiService.Result.Err -> r.message

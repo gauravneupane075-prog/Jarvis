@@ -140,6 +140,8 @@ object CommandParser {
             return Cmd.Maps(if (low.contains("nearby")) "$g near me" else g)
         }
 
+        m("^play\\s+(.+)$")?.let { return Cmd.PlayMusic(it.groupValues[1].trim()) }
+
         // Web search (opens the browser)
         m("^(?:search|google|look up|lookup)\\s+(?:on\\s+)?(?:google\\s+)?(?:for\\s+)?(.+)$")?.let {
             return Cmd.WebSearch(it.groupValues[1].trim())

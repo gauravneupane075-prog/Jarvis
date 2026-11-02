@@ -52,6 +52,7 @@ class MainActivity : AppCompatActivity(), Voice.Callback {
     private var thinking = false
     private var manual = false
     private var awaitCommand = false
+    private var converse = false
     private var inForeground = false
     var dialogOpen = false
 
@@ -84,7 +85,25 @@ class MainActivity : AppCompatActivity(), Voice.Callback {
         speaker = Speaker(this) { s ->
             speaking = s
             updateState()
-            if (!s) resumeHandsFree()
+            if (!s) {
+                if (converse) {
+                    // Conversation mode: after an AI answer, listen again for your follow-up.
+                    converse = false
+                    if (inForeground && !dialogOpen && !listening && !thinking) {
+                        handler.postDelayed({
+                            if (inForeground && !listening && !speaking && !thinking && !dialogOpen) {
+                                manual = true
+                                awaitCommand = false
+                                beginListening()
+                            }
+                        }, 400)
+                    } else {
+                        resumeHandsFree()
+                    }
+                } else {
+                    resumeHandsFree()
+                }
+            }
         }
         voice = Voice(this, this)
         executor = Executor(this)
@@ -254,6 +273,7 @@ class MainActivity : AppCompatActivity(), Voice.Callback {
     // ---------- Commands ----------
 
     private fun handle(text: String) {
+        converse = false
         addBubble("You", text)
         history.add("you", text)
         turns.add("user" to text)
@@ -265,8 +285,9 @@ class MainActivity : AppCompatActivity(), Voice.Callback {
     }
 
     private fun askAi() {
-        if (prefs.backendUrl.isBlank()) {
-            say("I can run phone commands offline. To answer questions, set up the AI backend in Settings.")
+        val key = prefs.apiKey
+        if (key.isBlank() && prefs.backendUrl.isBlank()) {
+            say("To chat with me, please add your Claude API key in Settings. Phone commands already work without it.")
             return
         }
         if (!isOnline()) {
@@ -276,11 +297,13 @@ class MainActivity : AppCompatActivity(), Voice.Callback {
         thinking = true
         updateState()
         aiJob = lifecycleScope.launch {
-            val r = ai.ask(prefs.backendUrl, prefs.token, prefs.language, turns.toList())
+            val r = if (key.isNotBlank()) ai.askDirect(key, prefs.language, turns.toList())
+                else ai.ask(prefs.backendUrl, prefs.token, prefs.language, turns.toList())
             thinking = false
             updateState()
             when (r) {
                 is AiService.Result.Ok -> {
+                    converse = true
                     say(r.speech)
                     r.cmd?.let { executor.run(it, true) }
                 }
@@ -303,11 +326,13 @@ class MainActivity : AppCompatActivity(), Voice.Callback {
     }
 
     fun stopSpeaking() {
+        converse = false
         speaker.stop()
     }
 
     private fun emergencyStop() {
         aiJob?.cancel()
+        converse = false
         thinking = false
         speaker.stop()
         voice.stop()

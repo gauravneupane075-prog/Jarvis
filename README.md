@@ -16,8 +16,8 @@ alarms and timers · reminders (calendar) · flashlight · volume · battery · 
 read latest SMS · read notifications · find photos/videos by day · open maps · open Bluetooth/Wi-Fi/location/brightness settings ·
 open a payment app after you confirm.
 
-## What needs the AI backend
-Questions, news, weather, research, and natural phrasing ("could you maybe ring my brother"). See **SETUP.md**.
+## What needs Claude (API key in Settings, or your backend)
+Conversation, questions, news, weather, research, and natural phrasing ("could you maybe ring my brother"). JARVIS keeps listening for your follow-up after each answer. Also open links, email drafts and play music. See **SETUP.md**.
 
 ## Honest limits (Android rules, not bugs)
 - JARVIS **cannot** send SMS/WhatsApp or pay silently. It opens the app and **you press send / approve**.

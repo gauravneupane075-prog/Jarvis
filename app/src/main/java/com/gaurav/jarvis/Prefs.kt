@@ -17,6 +17,14 @@ class Prefs(ctx: Context) {
         }
         set(v) { sp.edit().putString("tok", if (v.isEmpty()) "" else SecureStore.encrypt(v)).apply() }
 
+    /** Your own Claude API key, typed in Settings. Encrypted with the Android Keystore; never in the source code. */
+    var apiKey: String
+        get() {
+            val raw = sp.getString("akey", "") ?: ""
+            return if (raw.isEmpty()) "" else (SecureStore.decrypt(raw) ?: "")
+        }
+        set(v) { sp.edit().putString("akey", if (v.isEmpty()) "" else SecureStore.encrypt(v)).apply() }
+
     var language: String
         get() = sp.getString("lang", "en") ?: "en"
         set(v) { sp.edit().putString("lang", v).apply() }

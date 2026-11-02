@@ -1,6 +1,7 @@
 package com.gaurav.jarvis
 
 import android.Manifest
+import android.app.SearchManager
 import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
@@ -32,8 +33,9 @@ data class Contact(val name: String, val number: String)
 class Executor(private val a: MainActivity) {
 
     fun run(cmd: Cmd, fromAi: Boolean) {
-        if (fromAi) {
-            // Commands chosen by the AI always need your approval first (protects against bad web content).
+        val sensitive = cmd is Cmd.Call || cmd is Cmd.Sms || cmd is Cmd.WhatsApp || cmd is Cmd.OpenUrl || cmd is Cmd.Email
+        if (fromAi && sensitive) {
+            // Calls, messages and links chosen by the AI need your approval first (protects against bad web content).
             a.confirm("Allow JARVIS to do this?", describe(cmd)) { ok ->
                 if (ok) exec(cmd) else a.say("Okay, cancelled.")
             }
@@ -54,6 +56,9 @@ class Executor(private val a: MainActivity) {
         is Cmd.Flashlight -> if (c.on) "Turn the flashlight on" else "Turn the flashlight off"
         is Cmd.Volume -> if (c.up) "Turn the volume up" else "Turn the volume down"
         is Cmd.OpenSettings -> "Open ${c.which} settings"
+        is Cmd.OpenUrl -> "Open the link ${c.url}"
+        is Cmd.Email -> "Prepare an email to ${c.to}"
+        is Cmd.PlayMusic -> "Play ${c.query}"
         Cmd.Camera -> "Open the camera"
         Cmd.ReadNotifications -> "Read your notifications aloud"
         Cmd.ReadSms -> "Read your latest text message aloud"
@@ -105,6 +110,23 @@ class Executor(private val a: MainActivity) {
                         .putExtra(AlarmClock.EXTRA_SKIP_UI, true)
                 )
             }
+            is Cmd.OpenUrl -> {
+                if (cmd.url.startsWith("https://")) {
+                    a.say("Opening the link.")
+                    start(Intent(Intent.ACTION_VIEW, Uri.parse(cmd.url)))
+                } else {
+                    a.say("I only open secure https links.")
+                }
+            }
+            is Cmd.Email -> {
+                a.say("Opening an email draft. Please check it and press send yourself.")
+                start(
+                    Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + Uri.encode(cmd.to)))
+                        .putExtra(Intent.EXTRA_SUBJECT, cmd.subject)
+                        .putExtra(Intent.EXTRA_TEXT, cmd.body)
+                )
+            }
+            is Cmd.PlayMusic -> playMusic(cmd.query)
             is Cmd.Remind -> remind(cmd)
             is Cmd.Flashlight -> flashlight(cmd.on)
             is Cmd.Volume -> volume(cmd.up)
@@ -241,6 +263,18 @@ class Executor(private val a: MainActivity) {
         } else {
             a.say("Opening ${app.first}.")
             start(app.second)
+        }
+    }
+
+    private fun playMusic(q: String) {
+        a.say("Playing $q.")
+        val i = Intent(MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH)
+            .putExtra(MediaStore.EXTRA_MEDIA_FOCUS, "vnd.android.cursor.item/*")
+            .putExtra(SearchManager.QUERY, q)
+        try {
+            a.startActivity(i)
+        } catch (e: Exception) {
+            start(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/results?search_query=" + Uri.encode(q))))
         }
     }
 
