@@ -13,7 +13,7 @@ import android.os.BatteryManager
 import android.os.Build
 import android.provider.AlarmClock
 import android.provider.CalendarContract
-import android.provider.ContactsContract
+import android.provider.ContactsContract.CommonDataKinds.Phone
 import android.provider.MediaStore
 import android.provider.Settings
 import android.provider.Telephony
@@ -178,14 +178,13 @@ class Executor(private val a: MainActivity) {
 
     private fun findContacts(q: String): List<Contact> {
         val out = LinkedHashMap<String, Contact>()
-        val p = ContactsContract.CommonDataKinds.Phone
         try {
             a.contentResolver.query(
-                p.CONTENT_URI,
-                arrayOf(p.DISPLAY_NAME, p.NUMBER),
-                "${p.DISPLAY_NAME} LIKE ?",
+                Phone.CONTENT_URI,
+                arrayOf(Phone.DISPLAY_NAME, Phone.NUMBER),
+                "${Phone.DISPLAY_NAME} LIKE ?",
                 arrayOf("%$q%"),
-                "${p.DISPLAY_NAME} ASC"
+                "${Phone.DISPLAY_NAME} ASC"
             )?.use {
                 while (it.moveToNext()) {
                     val n = it.getString(0) ?: continue
