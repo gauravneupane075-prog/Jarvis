@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="jarvis_bg">#000000</color>
-    <color name="jarvis_cyan">#00E5FF</color>
-    <color name="jarvis_dim">#7FB8C4</color>
-    <color name="jarvis_text">#E6F7FA</color>
-    <color name="jarvis_red">#FF4D5E</color>
+    <color name="jarvis_bg">#07111D</color>
+    <color name="jarvis_cyan">#75E7FF</color>
+    <color name="jarvis_dim">#A3B9CC</color>
+    <color name="jarvis_text">#F2FAFF</color>
+    <color name="jarvis_red">#FF7185</color>
+    <color name="jarvis_glass">#1CFFFFFF</color>
+    <color name="jarvis_glass_stroke">#55D8F5FF</color>
 </resources>
