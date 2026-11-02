@@ -44,32 +44,32 @@ object CommandParser {
 
         // Common Romanized Nepali and mixed English/Nepali commands.
         // Speech recognition may return either Latin or Devanagari text depending on phone settings.
-        m("^(?:mero\\\\s+)?(.+?)\\\\s+लाई\\\\s+(?:फोन|कल)\\\\s+(?:गर|गर्नुहोस्).*$")?.let {
+        m("^(?:mero\\s+)?(.+?)\\s+लाई\\s+(?:फोन|कल)\\s+(?:गर|गर्नुहोस्).*$")?.let {
             return Cmd.Call(it.groupValues[1].trim())
         }
-        m("^(.+?)\\\\s+lai\\\\s+(?:phone|call)\\\\s+(?:gara|garnu|garnuhos)$")?.let {
+        m("^(.+?)\\s+lai\\s+(?:phone|call)\\s+(?:gara|garnu|garnuhos)$")?.let {
             return Cmd.Call(it.groupValues[1].trim())
         }
-        m("^(?:open\\\\s+)?(.+?)\\\\s+(?:khola|khol|kholnu|kholdeu)$")?.let {
+        m("^(?:open\\s+)?(.+?)\\s+(?:khola|khol|kholnu|kholdeu)$")?.let {
             return Cmd.OpenApp(it.groupValues[1].trim())
         }
-        m("^(?:google|internet)\\\\s+(?:ma\\\\s+)?(.+?)\\\\s+(?:khoja|search gara| खोज)$")?.let {
+        m("^(?:google|internet)\\s+(?:ma\\s+)?(.+?)\\s+(?:khoja|search gara| खोज)$")?.let {
             return Cmd.WebSearch(it.groupValues[1].trim())
         }
-        if (Regex("(?:samaya|time)\\\\s+kati|aja\\\\s+kati\\\\s+gate|कति\\\\s+बज्यो|आज\\\\s+कति\\\\s+गते").containsMatchIn(low)) {
+        if (Regex("(?:samaya|time)\\s+kati|aja\\s+kati\\s+gate|कति\\s+बज्यो|आज\\s+कति\\s+गते").containsMatchIn(low)) {
             return Cmd.Time
         }
-        if (Regex("(?:battery|batteri)\\\\s+kati|ब्याट्री\\\\s+कति").containsMatchIn(low)) return Cmd.Battery
-        if (Regex("^(?:torch|flashlight|batti|बत्ती)(?:\\\\s+on)?\\\\s+(?:bala|bal|gara|on gara)$").containsMatchIn(low) ||
-            Regex("टर्च\\\\s+(?:बाल|अन)").containsMatchIn(low)) return Cmd.Flashlight(true)
-        if (Regex("^(?:torch|flashlight|batti|बत्ती)\\\\s+(?:nibha|off gara|off)$").containsMatchIn(low) ||
-            Regex("टर्च\\\\s+(?:निभा|बन्द)").containsMatchIn(low)) return Cmd.Flashlight(false)
-        if (Regex("^(?:awaj|volume)\\\\s+(?:badhau|bada|up|increase)$").containsMatchIn(low) ||
-            Regex("आवाज\\\\s+बढाउ").containsMatchIn(low)) return Cmd.Volume(true)
-        if (Regex("^(?:awaj|volume)\\\\s+(?:ghatau|ghata|down|decrease)$").containsMatchIn(low) ||
-            Regex("आवाज\\\\s+घटाउ").containsMatchIn(low)) return Cmd.Volume(false)
-        if (Regex("^(?:photo|photos|tasbir|tasbira)\\\\s+(?:dekha|dekhauna|show)$").containsMatchIn(low) ||
-            Regex("फोटो\\\\s+(?:देखाउ|देखाऊ)").containsMatchIn(low)) return Cmd.Photos("latest", false)
+        if (Regex("(?:battery|batteri)\\s+kati|ब्याट्री\\s+कति").containsMatchIn(low)) return Cmd.Battery
+        if (Regex("^(?:torch|flashlight|batti|बत्ती)(?:\\s+on)?\\s+(?:bala|bal|gara|on gara)$").containsMatchIn(low) ||
+            Regex("टर्च\\s+(?:बाल|अन)").containsMatchIn(low)) return Cmd.Flashlight(true)
+        if (Regex("^(?:torch|flashlight|batti|बत्ती)\\s+(?:nibha|off gara|off)$").containsMatchIn(low) ||
+            Regex("टर्च\\s+(?:निभा|बन्द)").containsMatchIn(low)) return Cmd.Flashlight(false)
+        if (Regex("^(?:awaj|volume)\\s+(?:badhau|bada|up|increase)$").containsMatchIn(low) ||
+            Regex("आवाज\\s+बढाउ").containsMatchIn(low)) return Cmd.Volume(true)
+        if (Regex("^(?:awaj|volume)\\s+(?:ghatau|ghata|down|decrease)$").containsMatchIn(low) ||
+            Regex("आवाज\\s+घटाउ").containsMatchIn(low)) return Cmd.Volume(false)
+        if (Regex("^(?:photo|photos|tasbir|tasbira)\\s+(?:dekha|dekhauna|show)$").containsMatchIn(low) ||
+            Regex("फोटो\\s+(?:देखाउ|देखाऊ)").containsMatchIn(low)) return Cmd.Photos("latest", false)
 
         // WhatsApp
         m("^(?:send|message|text)\\s+(.+?)\\s+(?:a\\s+)?whatsapp(?:\\s+message)?\\s*(?:saying|that says|that|:)?\\s*(.*)$")?.let {
