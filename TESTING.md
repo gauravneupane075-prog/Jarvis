@@ -1,7 +1,7 @@
 # Testing status (be honest about what is verified)
 
 ## Verified
-- (updated after the first CI build)
+- The project compiles and builds a debug APK on GitHub Actions (Kotlin 1.9.24, AGP 8.5.2, Gradle 8.7). Compilation is the only thing verified so far.
 
 ## NOT yet tested on a real phone (Samsung Galaxy F22)
 Everything below was written carefully against the official Android APIs but has not been run on a device:
