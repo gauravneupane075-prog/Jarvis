@@ -1,6 +1,6 @@
 # JARVIS: voice assistant for Android
 
-A native Android app (Kotlin) you control by voice, in English and Nepali. Phone commands work offline.
+A native Android app (Kotlin) you control by voice. English and Nepali are supported; choose the speech-recognition language in Settings. Common Romanized Nepali and mixed English/Nepali phone commands are also recognized by the offline command parser.
 Questions, news and research use Claude through a small backend that keeps your API key off the phone.
 
 ## Install the app (no coding needed)
@@ -22,8 +22,8 @@ Conversation, questions, news, weather, research, and natural phrasing ("could y
 ## Honest limits (Android rules, not bugs)
 - JARVIS **cannot** send SMS/WhatsApp or pay silently. It opens the app and **you press send / approve**.
 - Bluetooth/Wi-Fi cannot be toggled by apps on modern Android. JARVIS opens the settings page.
-- "Hey Jarvis" hands-free is **experimental** and only works while the app is open on screen. There is no background wake word.
-- Nepali commands: only a few offline phrases. Everything else in Nepali goes through the AI backend. Nepali speech output needs a Nepali voice installed in Google Text-to-speech.
+- "Hey Jarvis" hands-free is **experimental** and only works while the app is open on screen. There is no background wake word or microphone foreground service yet. Do not expect it to listen after you leave the app or restart the phone.
+- Speech recognition uses the language selected in Settings (English or Nepali), not automatic live language detection. Common Romanized Nepali/mixed commands are parsed offline, but recognition accuracy depends on the installed speech service. Nepali speech output needs a Nepali voice installed in Google Text-to-speech.
 - Reading SMS needs the SMS permission. Google Play restricts this, which is fine for a personal APK.
 
 See TESTING.md for what has and has not been tested.
